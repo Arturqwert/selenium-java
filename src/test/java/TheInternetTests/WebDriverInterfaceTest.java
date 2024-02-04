@@ -3,30 +3,25 @@ package TheInternetTests;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class BaseFuncSeleniumTest {
+public class WebDriverInterfaceTest {
 
     private WebDriver driver;
     private String baseUrl = "https://the-internet.herokuapp.com";
+
     @BeforeEach
-    public void setUp()
-    {
+    public void setUp() {
         ChromeOptions capabilities = new ChromeOptions();
         capabilities.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         driver = new ChromeDriver(capabilities);
@@ -34,12 +29,12 @@ public class BaseFuncSeleniumTest {
     }
 
     @AfterEach
-    public void tearDown()
-    {
-        if(driver != null) {
+    public void tearDown() {
+        if (driver != null) {
             driver.quit();
         }
     }
+
     @Test
     public void loginTest() {
         driver.get(baseUrl + "/login");
@@ -54,8 +49,7 @@ public class BaseFuncSeleniumTest {
     }
 
     @Test
-    public void longLoadingTest()
-    {
+    public void longLoadingTest() {
         driver.get(baseUrl + "/dynamic_loading/2");
 
         driver.findElement(By.cssSelector("#start button")).click();
@@ -68,8 +62,7 @@ public class BaseFuncSeleniumTest {
     }
 
     @Test
-    public void switchBetweenTabs()
-    {
+    public void shouldSwitchBetweenTabs() {
         driver.get(baseUrl + "/windows");
 
         driver.findElement(By.linkText("Click Here")).click();
@@ -89,8 +82,7 @@ public class BaseFuncSeleniumTest {
     }
 
     @Test
-    public void switchBetweenFrames()
-    {
+    public void shouldSwitchBetweenFrames() {
         driver.get(baseUrl + "/iframe");
 
         driver.switchTo().frame("mce_0_ifr");
@@ -105,7 +97,7 @@ public class BaseFuncSeleniumTest {
     }
 
     @Test
-    public void authWithCookie() throws IOException {
+    public void shouldAuthWithCookie() throws IOException {
         Properties properties = new Properties();
         properties.load(new FileReader("src/main/resources/credentials.properties"));
 
@@ -119,5 +111,22 @@ public class BaseFuncSeleniumTest {
         driver.manage().deleteCookieNamed("user_session");
 
         assertEquals(img, "https://avatars.githubusercontent.com/u/85057592?v=4");
+    }
+
+    @Test
+    public void shouldReceiveStaleElementReferenceException() {
+        driver.get(baseUrl + "/login");
+
+        var res1 = driver.findElement(By.cssSelector(".radius"));
+
+        driver.navigate().refresh();
+
+        try {
+            res1.click();
+        }
+        catch (StaleElementReferenceException exception)
+        {
+            assertTrue(exception.getMessage().contains("stale element not found"));
+        }
     }
 }
