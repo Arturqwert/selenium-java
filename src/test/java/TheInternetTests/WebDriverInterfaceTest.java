@@ -1,8 +1,11 @@
 package TheInternetTests;
 
+import TheInternetTests.Extensions.PropsResolver;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -14,11 +17,19 @@ import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@ExtendWith(PropsResolver.class)
 public class WebDriverInterfaceTest {
 
     private WebDriver driver;
-    private String baseUrl = "https://the-internet.herokuapp.com";
+    public static Properties props;
+    public static String baseUrl;
+
+    @BeforeAll
+    public static void setUpOneTime(Properties properties)
+    {
+        props = properties;
+        baseUrl = props.getProperty("url");
+    }
 
     @BeforeEach
     public void setUp() {
@@ -95,13 +106,9 @@ public class WebDriverInterfaceTest {
         var textFromPage = driver.findElement(By.cssSelector("h3")).getText();
         assertEquals(textFromPage, "An iFrame containing the TinyMCE WYSIWYG Editor");
     }
-
     @Test
     public void shouldAuthWithCookie() throws IOException {
-        Properties properties = new Properties();
-        properties.load(new FileReader("src/main/resources/credentials.properties"));
-
-        String userToken = properties.getProperty("user.token");
+        String userToken = props.getProperty("user.token");
         driver.get("https://github.com");
 
         driver.manage().addCookie(new Cookie("user_session", userToken));
