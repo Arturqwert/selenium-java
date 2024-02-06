@@ -1,6 +1,6 @@
 package TheInternetTests.Extensions;
 
-import TheInternetTests.WebElementInterfaceTest;
+import TheInternetTests.Infrastructure.WebDriverProvider;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.By;
@@ -11,31 +11,53 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class WatcherTakeScreenshotAfterFail implements TestWatcher {
+    private WebDriver driver = null;
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
 
-        WebDriver driver = null;
         try {
-            var t = context.getTestInstances().get().getAllInstances().get(0);
-            driver = ((WebElementInterfaceTest) t).driver;
+            setDriver(context);
+            takeScreenshot();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        } finally {
+            closeDriver();
+        }
+    }
 
+    private void setDriver(ExtensionContext context) {
+        var instance = context.getTestInstances().get().getAllInstances().get(0);
+        driver = ((WebDriverProvider)instance).getDriver();
+    }
+
+    private void takeScreenshot() {
+        try {
             File screenshot = driver.findElement(By.cssSelector("html")).getScreenshotAs(OutputType.FILE);
-            try {
-                Files.move(screenshot.toPath(), Path.of("./src/main/resources/screenshots/" + screenshot.getName()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("watcher");
+            Files.move(screenshot.toPath(), Path.of("./src/main/resources/screenshots/"
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH_mm_dd_MM_yyyy"))
+                    + screenshot.getName()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        catch (Exception ex) {
-            System.err.println(ex.getMessage());
-        }
-        finally {
+    }
+
+    @Override
+    public void testSuccessful(ExtensionContext context) {
+        setDriver(context);
+        closeDriver();
+    }
+
+    private void closeDriver() {
+        try {
             if (driver != null) {
                 driver.quit();
             }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
     }
 }

@@ -1,12 +1,14 @@
 package TheInternetTests;
 
 import TheInternetTests.Extensions.PropsResolver;
+import TheInternetTests.Extensions.SetUpDriverResolver;
 import TheInternetTests.Extensions.WatcherTakeScreenshotAfterFail;
+import TheInternetTests.Infrastructure.WebDriverProvider;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -17,31 +19,26 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//@ExtendWith({SeleniumJupiter.class, PropsResolver.class})
-@ExtendWith(PropsResolver.class)
-public class WebElementInterfaceTest {
+@ExtendWith({PropsResolver.class, WatcherTakeScreenshotAfterFail.class, SetUpDriverResolver.class})
+public class WebElementInterfaceTest implements WebDriverProvider {
     public static Properties props;
     public static String baseUrl;
     public WebDriver driver;
 
     @BeforeAll
-    public static void setUpOneTime(Properties properties)
-    {
-       props = properties;
-       baseUrl = props.getProperty("url");
+    public static void setUpOneTime(Properties properties) {
+        props = properties;
+        baseUrl = props.getProperty("url");
     }
 
-//    @BeforeEach
-//    public void setUp(ChromeDriver driver)
-//    {
-//        this.driver = driver;
-//    }
-
+    @BeforeEach
+    public void setUp(WebDriver driver) {
+        this.driver = driver;
+    }
 
 
     @Test
-    public void shouldFindElement_s()
-    {
+    public void shouldFindElement_s() {
         driver.get(baseUrl);
 
         WebElement element = driver.findElement(By.cssSelector("h2"));
@@ -52,8 +49,7 @@ public class WebElementInterfaceTest {
     }
 
     @Test
-    public void searchContextTest()
-    {
+    public void searchContextTest() {
         driver.get(baseUrl);
 
         WebElement element = driver.findElement(By.cssSelector("#content"));
@@ -63,8 +59,7 @@ public class WebElementInterfaceTest {
     }
 
     @Test
-    public void shouldClearInput()
-    {
+    public void shouldClearInput() {
         driver.get(baseUrl + "/key_presses");
 
         WebElement input = driver.findElement(By.cssSelector("#target"));
@@ -76,8 +71,7 @@ public class WebElementInterfaceTest {
     }
 
     @Test
-    public void shouldUploadFile()
-    {
+    public void shouldUploadFile() {
         driver.get(baseUrl + "/upload");
 
         driver.manage().timeouts().implicitlyWait(Duration.of(2, ChronoUnit.SECONDS));
@@ -88,16 +82,15 @@ public class WebElementInterfaceTest {
         assertEquals(".gitignore", nameUploadedFile);
     }
 
-    @ExtendWith(WatcherTakeScreenshotAfterFail.class)
     @Test
     public void shouldTakeScreenshot() throws IOException {
-        driver = new ChromeDriver();
         driver.get(baseUrl + "/login");
 
-        //File screenshot = driver.findElement(By.cssSelector("form")).getScreenshotAs(OutputType.FILE);
-
-        //Files.move(screenshot.toPath(), Path.of("./scrn.png"));
-
         assertEquals(1, 2);
+    }
+
+    @Override
+    public WebDriver getDriver() {
+        return driver;
     }
 }

@@ -1,26 +1,25 @@
 package TheInternetTests;
 
 import TheInternetTests.Extensions.PropsResolver;
-import org.junit.jupiter.api.AfterEach;
+import TheInternetTests.Extensions.SetUpDriverResolver;
+import TheInternetTests.Extensions.WatcherTakeScreenshotAfterFail;
+import TheInternetTests.Infrastructure.WebDriverProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
-@ExtendWith(PropsResolver.class)
-public class WebDriverInterfaceTest {
+@ExtendWith({PropsResolver.class, WatcherTakeScreenshotAfterFail.class, SetUpDriverResolver.class})
+public class WebDriverInterfaceTest implements WebDriverProvider {
 
-    private WebDriver driver;
+    public WebDriver driver;
     public static Properties props;
     public static String baseUrl;
 
@@ -32,18 +31,8 @@ public class WebDriverInterfaceTest {
     }
 
     @BeforeEach
-    public void setUp() {
-        ChromeOptions capabilities = new ChromeOptions();
-        capabilities.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
-        driver = new ChromeDriver(capabilities);
-        driver.manage().window().maximize();
-    }
-
-    @AfterEach
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+    public void setUp(WebDriver driver) {
+        this.driver = driver;
     }
 
     @Test
@@ -135,5 +124,10 @@ public class WebDriverInterfaceTest {
         {
             assertTrue(exception.getMessage().contains("stale element not found"));
         }
+    }
+
+    @Override
+    public WebDriver getDriver() {
+        return driver;
     }
 }
