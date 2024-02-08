@@ -27,6 +27,7 @@ import static java.time.Duration.*;
 import static java.time.temporal.ChronoUnit.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.openqa.selenium.By.cssSelector;
 
 @ExtendWith(SeleniumJupiter.class)
 public class WaitersTest {
@@ -46,8 +47,8 @@ public class WaitersTest {
         driver.manage().timeouts().implicitlyWait(of(20, SECONDS));
         driver.get(baseUrl + "/ajax");
 
-        driver.findElement(By.cssSelector("#ajaxButton")).click();
-        String successText = driver.findElement(By.cssSelector(".bg-success")).getText();
+        driver.findElement(cssSelector("#ajaxButton")).click();
+        String successText = driver.findElement(cssSelector(".bg-success")).getText();
 
         assertEquals(textToBe, successText);
     }
@@ -56,12 +57,12 @@ public class WaitersTest {
     public void progressBarWithOwnWaiterTest(ChromeDriver driver) {
         driver.get(baseUrl + "/progressbar");
 
-        driver.findElement(By.cssSelector("#startButton")).click();
-        WebElement stopButton =  driver.findElement(By.cssSelector("#stopButton"));
-        WebElement result =  driver.findElement(By.cssSelector("#result"));
+        driver.findElement(cssSelector("#startButton")).click();
+        WebElement stopButton =  driver.findElement(cssSelector("#stopButton"));
+        WebElement result =  driver.findElement(cssSelector("#result"));
 
         long timeOutInSeconds = 20;
-        By progressLocator = By.cssSelector("#progressBar");
+        By progressLocator = cssSelector("#progressBar");
         String textToBe = "75%";
 
         ownWaiter(driver, timeOutInSeconds, progressLocator, textToBe);
@@ -91,11 +92,11 @@ public class WaitersTest {
     public void explicitlyWaitTest(ChromeDriver driver){
         driver.get(baseUrl + "/progressbar");
 
-        driver.findElement(By.cssSelector("#startButton")).click();
-        WebElement stopButton =  driver.findElement(By.cssSelector("#stopButton"));
-        WebElement result =  driver.findElement(By.cssSelector("#result"));
+        driver.findElement(cssSelector("#startButton")).click();
+        WebElement stopButton =  driver.findElement(cssSelector("#stopButton"));
+        WebElement result =  driver.findElement(cssSelector("#result"));
 
-        By progressLocator = By.cssSelector("#progressBar");
+        By progressLocator = cssSelector("#progressBar");
         String textToBe = "75%";
 
         WebDriverWait waiter = new WebDriverWait(driver, of(20, SECONDS));
@@ -114,7 +115,7 @@ public class WaitersTest {
         driver.get("file://" + filepath);
 
         String cssValueToBe = "rgba(163, 217, 135, 1)";
-        By light = By.cssSelector("#light");
+        By light = cssSelector("#light");
 
         WebDriverWait wait = new WebDriverWait(driver, of(2, SECONDS));
         wait.withMessage("не удалось найти свойство " + cssValueToBe)
@@ -122,5 +123,24 @@ public class WaitersTest {
 
         String textIsAs = driver.findElement(light).getText();
         assertEquals("green", textIsAs);
+    }
+
+    @Test
+    public void conflictWaitersTest(ChromeDriver driver){
+        driver.manage().timeouts().implicitlyWait(ofSeconds(15));
+        //test duration ~34 sec, because the element is not found within 15 sec and the driver sends another request with timeout of 15 sec
+        //After the first request timeout 15 of the 20 are spent in explicitly wait, so the driver sends another request.
+
+        driver.get(baseUrl + "/ajax");
+
+        driver.findElement(cssSelector("#ajaxButton")).click();
+        By locator = cssSelector(".bg-success9");
+
+        new WebDriverWait(driver, ofSeconds(20))
+                .until(ExpectedConditions.textToBe(locator, "Data loaded with AJAX get request."));
+
+        String successText = driver.findElement(locator).getText();
+
+        assertEquals("Data loaded with AJAX get request.", successText);
     }
 }
