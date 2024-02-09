@@ -1,15 +1,18 @@
-package TheInternetTests;
+package LabirintTests;
 
+import LabirintTests.Block.BookCard;
+import LabirintTests.Page.MainPage;
+import LabirintTests.Page.SearchResult;
 import io.github.bonigarcia.seljup.SeleniumJupiter;
 import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +23,7 @@ public class LabirintTest {
     private final String url = "https://www.labirint.ru/";
 
     @Test
-    public void shouldBeEquivalentAmountGoodsInBasketAndOnPage(ChromeDriver driver) throws InterruptedException {
+    public void searchTest(ChromeDriver driver) throws InterruptedException {
         driver.manage().window().maximize();
         driver.get(url);
         driver.manage().addCookie(new Cookie("cookie_policy", "1"));
@@ -50,5 +53,29 @@ public class LabirintTest {
 
         assertEquals(goodsFromBtns, goodsFromBtns);
 
+    }
+
+    @Test
+    public void searchPOMTest(ChromeDriver driver) throws InterruptedException {
+        MainPage mainPage = new MainPage(driver);
+
+        mainPage.get();
+        mainPage.getHeader().search("java");
+
+        SearchResult searchResult = new SearchResult(driver);
+        searchResult.sortByType("высокий рейтинг");
+        searchResult.closeChip("ожидаются");
+        searchResult.closeChip("нет в продаже");
+
+        List<BookCard> books = searchResult.getBooks();
+
+        for (BookCard book : books) {
+            book.addToCart();
+        }
+
+        String booksCount = Integer.toString(books.size());
+        String goodsInBasket = searchResult.getHeader().awaitLoadCartCounter(booksCount).getCartCounter();
+
+        assertEquals(booksCount, goodsInBasket);
     }
 }
