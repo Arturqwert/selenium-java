@@ -1,11 +1,9 @@
 package LabirintTests.Page;
 
 import LabirintTests.Block.BookCard;
-import LabirintTests.Block.Header;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -40,7 +38,7 @@ public class SearchResult extends Page{
 
         for (WebElement chip : chips) {
             if(chip.getText().equalsIgnoreCase(name)){
-                chip.click();
+                chip.findElement(By.cssSelector(".header-sprite")).click();
                 break;
             }
         }

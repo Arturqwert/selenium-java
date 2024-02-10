@@ -4,15 +4,11 @@ import LabirintTests.Block.BookCard;
 import LabirintTests.Page.MainPage;
 import LabirintTests.Page.SearchResult;
 import io.github.bonigarcia.seljup.SeleniumJupiter;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,12 +42,10 @@ public class LabirintTest {
             btn.click();
         }
 
-        String test = String.valueOf(btns.size());
-
         String goodsFromBtns = Integer.toString(btns.size());
         String goodsInBasket = driver.findElement(By.cssSelector("span.basket-in-cart-a")).getText();
 
-        assertEquals(goodsFromBtns, goodsFromBtns);
+        assertEquals(goodsFromBtns, goodsInBasket);
 
     }
 
@@ -59,7 +53,7 @@ public class LabirintTest {
     public void searchPOMTest(ChromeDriver driver) throws InterruptedException {
         MainPage mainPage = new MainPage(driver);
 
-        mainPage.get();
+        mainPage.getWithConditions();
         mainPage.getHeader().search("java");
 
         SearchResult searchResult = new SearchResult(driver);
