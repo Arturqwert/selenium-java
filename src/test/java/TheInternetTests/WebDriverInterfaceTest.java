@@ -35,6 +35,11 @@ public class WebDriverInterfaceTest implements WebDriverProvider {
         this.driver = driver;
     }
 
+    @Override
+    public WebDriver getDriver() {
+        return driver;
+    }
+
     @Test
     public void loginTest() {
         driver.get(baseUrl + "/login");
@@ -124,10 +129,5 @@ public class WebDriverInterfaceTest implements WebDriverProvider {
         {
             assertTrue(exception.getMessage().contains("stale element not found"));
         }
-    }
-
-    @Override
-    public WebDriver getDriver() {
-        return driver;
     }
 }

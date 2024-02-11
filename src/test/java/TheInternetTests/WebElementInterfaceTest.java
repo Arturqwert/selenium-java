@@ -36,6 +36,10 @@ public class WebElementInterfaceTest implements WebDriverProvider {
         this.driver = driver;
     }
 
+    @Override
+    public WebDriver getDriver() {
+        return driver;
+    }
 
     @Test
     public void shouldFindElement_s() {
@@ -87,10 +91,5 @@ public class WebElementInterfaceTest implements WebDriverProvider {
         driver.get(baseUrl + "/login");
 
         assertEquals(1, 2);
-    }
-
-    @Override
-    public WebDriver getDriver() {
-        return driver;
     }
 }
