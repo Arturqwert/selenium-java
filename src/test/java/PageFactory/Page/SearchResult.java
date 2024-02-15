@@ -1,6 +1,7 @@
 package PageFactory.Page;
 
 import PageFactory.Block.BookCard;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -28,12 +29,14 @@ public class SearchResult extends Page {
        super(driver);
     }
 
+    @Step("Отсортировать по '{sortType}'.")
     public void sortByType(String sortType) throws InterruptedException {
         sortingValue.click();
         driver.findElement(By.cssSelector("[data-event-content='" + sortType + "']")).click();
         loaderWait();
     }
 
+    @Step("Получить все книги.")
     public List<BookCard> getBooks(){
         List<BookCard> bookCards = new ArrayList<>();
         for (WebElement card : cards) {
@@ -43,6 +46,7 @@ public class SearchResult extends Page {
         return bookCards;
     }
 
+    @Step("Убрать фильтр '{name}'.")
     public void closeChip(String name) throws InterruptedException {
         for (WebElement chip : chips) {
             if(chip.getText().equalsIgnoreCase(name)){
@@ -52,6 +56,7 @@ public class SearchResult extends Page {
         }
         loaderWait();
     }
+    @Step("Ожидаение лоадера.")
     public void loaderWait(){
         new WebDriverWait(driver, Duration.ofSeconds(4))
                 .until(ExpectedConditions.invisibilityOf(loader));
