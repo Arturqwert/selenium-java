@@ -1,7 +1,6 @@
 package Selenide;
 
 import com.codeborne.selenide.AssertionMode;
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.junit5.ScreenShooterExtension;
 import com.codeborne.selenide.junit5.SoftAssertsExtension;
@@ -18,6 +17,7 @@ public class LoginTest {
     @BeforeAll
     public static void setUp(){
         Configuration.browser = "edge";
+        Configuration.baseUrl = "https://the-internet.herokuapp.com";
         Configuration.screenshots = false;
         Configuration.headless = false;
         Configuration.timeout = 1000;
@@ -26,7 +26,7 @@ public class LoginTest {
 
     @Test
     public void shouldLogin(){
-        open("https://the-internet.herokuapp.com/login");
+        open("/login");
 
         $("#username").sendKeys("tomsmith");
         $("#password")
