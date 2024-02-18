@@ -26,7 +26,7 @@ public class SearchResult extends Page {
     private WebElement loader;
 
     public SearchResult(WebDriver driver) {
-       super(driver);
+        super(driver);
     }
 
     @Step("Отсортировать по '{sortType}'.")
@@ -37,7 +37,7 @@ public class SearchResult extends Page {
     }
 
     @Step("Получить все книги.")
-    public List<BookCard> getBooks(){
+    public List<BookCard> getBooks() {
         List<BookCard> bookCards = new ArrayList<>();
         for (WebElement card : cards) {
             bookCards.add(new BookCard(card));
@@ -49,15 +49,16 @@ public class SearchResult extends Page {
     @Step("Убрать фильтр '{name}'.")
     public void closeChip(String name) throws InterruptedException {
         for (WebElement chip : chips) {
-            if(chip.getText().equalsIgnoreCase(name)){
+            if (chip.getText().equalsIgnoreCase(name)) {
                 chip.findElement(By.cssSelector(".header-sprite")).click();
                 break;
             }
         }
         loaderWait();
     }
+
     @Step("Ожидаение лоадера.")
-    public void loaderWait(){
+    public void loaderWait() {
         new WebDriverWait(driver, Duration.ofSeconds(4))
                 .until(ExpectedConditions.invisibilityOf(loader));
     }

@@ -21,9 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Feature("Добавлеие книг в корзину.")
 @Story("Как пользователь я хочу добавлять книги в корзину.")
 public class LabirintTest {
-
     private final String url = "https://www.labirint.ru/";
-    private  SearchResult searchResult;
+    private SearchResult searchResult;
 
     @DisplayName("Ищем книги на странице.")
     @Severity(SeverityLevel.CRITICAL)
@@ -55,18 +54,18 @@ public class LabirintTest {
         int booksCount = books.size();
         int goodsInBasket = searchResult.getHeader().awaitLoadCartCounter(booksCount).getCartCounter();
 
-        step("Проверка соответствия количества добавленных товаров. О.Р. = " + booksCount + ".", () ->{
+        step("Проверка соответствия количества добавленных товаров. О.Р. = " + booksCount + ".", () -> {
             assertEquals(booksCount, goodsInBasket);
         });
     }
 
     @Attachment(value = "reques-Body", type = "application/json")
-    private String generateJson(){
+    private String generateJson() {
         return "{\"name\": \"Artur\"}";
     }
 
     @Attachment(value = "sql-query", type = "text/plain")
-    private String generateSql(){
+    private String generateSql() {
         return "SELECT * FROM users WHERE id IN (1, 2 ,3)";
     }
 }
