@@ -4,11 +4,17 @@ import LabirintTests.Block.BookCard;
 import LabirintTests.Page.MainPage;
 import LabirintTests.Page.SearchResult;
 import io.github.bonigarcia.seljup.SeleniumJupiter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +23,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LabirintTest {
 
     private final String url = "https://www.labirint.ru/";
+    private WebDriver driver;
+
+    @BeforeEach
+    public void setUp() throws MalformedURLException {
+        driver = new RemoteWebDriver(new URL("http://localhost:4444"), new ChromeOptions());
+    }
+
+    @AfterEach
+    public void tearDown(){
+        if (driver != null){
+            driver.quit();
+        }
+    }
 
     @Test
     public void searchTest(ChromeDriver driver) throws InterruptedException {
@@ -50,7 +69,7 @@ public class LabirintTest {
     }
 
     @Test
-    public void searchPOMTest(ChromeDriver driver) throws InterruptedException {
+    public void searchPOMTest() throws InterruptedException {
         MainPage mainPage = new MainPage(driver);
 
         mainPage.getWithConditions();
