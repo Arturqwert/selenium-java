@@ -38,7 +38,8 @@ public class LabirintTest {
             "selenium/standalone-chrome:latest"
     )
             //.withExposedPorts(7900)
-            .withRecordingMode(VncRecordingMode.RECORD_ALL, Path.of("vids").toFile(), MP4);
+            //.withRecordingMode(VncRecordingMode.RECORD_ALL, Path.of("vids").toFile(), MP4)
+    ;
 
     @BeforeEach
     public void setUp() throws MalformedURLException {
@@ -86,25 +87,26 @@ public class LabirintTest {
 
     @Test
     public void searchPOMTest() throws InterruptedException {
-        MainPage mainPage = new MainPage(driver);
-
-        mainPage.getWithConditions();
-        mainPage.getHeader().search("java");
-
-        SearchResult searchResult = new SearchResult(driver);
-        searchResult.sortByType("высокий рейтинг");
-        searchResult.closeChip("ожидаются");
-        searchResult.closeChip("нет в продаже");
-
-        List<BookCard> books = searchResult.getBooks();
-
-        for (BookCard book : books) {
-            book.addToCart();
-        }
-
-        String booksCount = Integer.toString(books.size());
-        String goodsInBasket = searchResult.getHeader().awaitLoadCartCounter(booksCount).getCartCounter();
-
-        assertEquals(booksCount, goodsInBasket);
+        throw new RuntimeException("hello world!");
+//        MainPage mainPage = new MainPage(driver);
+//
+//        mainPage.getWithConditions();
+//        mainPage.getHeader().search("java");
+//
+//        SearchResult searchResult = new SearchResult(driver);
+//        searchResult.sortByType("высокий рейтинг");
+//        searchResult.closeChip("ожидаются");
+//        searchResult.closeChip("нет в продаже");
+//
+//        List<BookCard> books = searchResult.getBooks();
+//
+//        for (BookCard book : books) {
+//            book.addToCart();
+//        }
+//
+//        String booksCount = Integer.toString(books.size());
+//        String goodsInBasket = searchResult.getHeader().awaitLoadCartCounter(booksCount).getCartCounter();
+//
+//        assertEquals(booksCount, goodsInBasket);
     }
 }
