@@ -42,8 +42,6 @@ public class LabirintTest {
 
     @BeforeEach
     public void setUp() throws MalformedURLException {
-        System.out.println("teste");
-
         driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
         //driver = new RemoteWebDriver(new URL("http://localhost:4444"), new ChromeOptions());
     }
