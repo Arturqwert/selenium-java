@@ -2,7 +2,7 @@ echo "rm allure-results"
 rm -rf ./allure-results
 
 echo "allure-test"
-mvn -Dtest="PageFactory.LabirintTest" clean test
+mvn -Dtest="LabirintTests.LabirintTest#searchPOMTest" clean test
 
 echo "allure-history"
 cp -r ./allure-report/history ./allure-results/history
