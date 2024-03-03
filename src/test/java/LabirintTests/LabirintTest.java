@@ -41,6 +41,7 @@ public class LabirintTest {
         options.setCapability("browserVersion", "122.0");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-sandbox");
+        options.setCapability("enableVNC", true);
         options.setCapability("selenoid:options", new HashMap<String, Object>() {{
             /* How to add test badge */
             put("name", "Test badge...");
@@ -61,7 +62,10 @@ public class LabirintTest {
             /* How to enable video recording */
             put("enableVideo", true);
         }});
-        driver = new RemoteWebDriver(new URL("http://selenoid:4444/wd/hub"), options);
+
+        String hubURL = System.getProperty("hub_name", "http://localhost:4444");
+
+        driver = new RemoteWebDriver(new URL(hubURL + "/wd/hub"), options);
 
         //driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
         //driver = new RemoteWebDriver(new URL("http://localhost:4444"), new ChromeOptions());
