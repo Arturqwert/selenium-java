@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -20,6 +21,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,32 +30,50 @@ import static org.testcontainers.containers.BrowserWebDriverContainer.*;
 import static org.testcontainers.containers.VncRecordingContainer.VncRecordingFormat.MP4;
 
 @ExtendWith(SeleniumJupiter.class)
-@Testcontainers
 public class LabirintTest {
 
     private final String url = "https://www.labirint.ru/";
     private WebDriver driver;
 
-    @Container
-    public BrowserWebDriverContainer chrome = new BrowserWebDriverContainer<>(
-            "selenium/standalone-chrome:latest"
-    )
-            //.withExposedPorts(7900)
-            //.withRecordingMode(VncRecordingMode.RECORD_ALL, Path.of("vids").toFile(), MP4)
-    ;
-
     @BeforeEach
     public void setUp() throws MalformedURLException {
-        driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
+        FirefoxOptions  options = new FirefoxOptions ();
+        options.setCapability("browserVersion", "122.0");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
+        options.setCapability("selenoid:options", new HashMap<String, Object>() {{
+            /* How to add test badge */
+            put("name", "Test badge...");
+
+            /* How to set session timeout */
+            put("sessionTimeout", "1m");
+
+            /* How to set timezone */
+            put("env", new ArrayList<String>() {{
+                add("TZ=UTC");
+            }});
+
+            /* How to add "trash" button */
+            put("labels", new HashMap<String, Object>() {{
+                put("auto", "true");
+            }});
+
+            /* How to enable video recording */
+            put("enableVideo", true);
+        }});
+        driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
+
+        //driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
         //driver = new RemoteWebDriver(new URL("http://localhost:4444"), new ChromeOptions());
+        //driver = new ChromeDriver();
     }
 
-//    @AfterEach
-//    public void tearDown() {
-//        if (driver != null) {
-//            driver.quit();
-//        }
-//    }
+    @AfterEach
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
 
     @Test
     public void searchTest(ChromeDriver driver) throws InterruptedException {
@@ -87,26 +108,26 @@ public class LabirintTest {
 
     @Test
     public void searchPOMTest() throws InterruptedException {
-        throw new RuntimeException("hello world!");
-//        MainPage mainPage = new MainPage(driver);
-//
-//        mainPage.getWithConditions();
-//        mainPage.getHeader().search("java");
-//
-//        SearchResult searchResult = new SearchResult(driver);
-//        searchResult.sortByType("высокий рейтинг");
-//        searchResult.closeChip("ожидаются");
-//        searchResult.closeChip("нет в продаже");
-//
-//        List<BookCard> books = searchResult.getBooks();
-//
-//        for (BookCard book : books) {
-//            book.addToCart();
-//        }
-//
-//        String booksCount = Integer.toString(books.size());
-//        String goodsInBasket = searchResult.getHeader().awaitLoadCartCounter(booksCount).getCartCounter();
-//
-//        assertEquals(booksCount, goodsInBasket);
+        //throw new RuntimeException("hello world!");
+        MainPage mainPage = new MainPage(driver);
+
+        mainPage.getWithConditions();
+        mainPage.getHeader().search("java");
+
+        SearchResult searchResult = new SearchResult(driver);
+        searchResult.sortByType("высокий рейтинг");
+        searchResult.closeChip("ожидаются");
+        searchResult.closeChip("нет в продаже");
+
+        List<BookCard> books = searchResult.getBooks();
+
+        for (BookCard book : books) {
+            book.addToCart();
+        }
+
+        String booksCount = Integer.toString(books.size());
+        String goodsInBasket = searchResult.getHeader().awaitLoadCartCounter(booksCount).getCartCounter();
+
+        assertEquals(booksCount, goodsInBasket);
     }
 }

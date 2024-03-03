@@ -15,10 +15,10 @@ public class Header {
         this.driver = driver;
     }
 
-    public void search(String value)
-    {
+    public void search(String value) throws InterruptedException {
         driver.findElement(By.cssSelector("#search-field")).clear();
         driver.findElement(By.cssSelector("#search-field")).sendKeys(value, Keys.RETURN);
+        Thread.sleep(2*1000);
     }
 
     public String getCartCounter(){
