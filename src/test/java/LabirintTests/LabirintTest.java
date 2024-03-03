@@ -37,11 +37,10 @@ public class LabirintTest {
 
     @BeforeEach
     public void setUp() throws MalformedURLException {
-        FirefoxOptions  options = new FirefoxOptions ();
+        ChromeOptions options = new ChromeOptions ();
         options.setCapability("browserVersion", "122.0");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-sandbox");
-        options.setCapability("enableVNC", true);
         options.setCapability("selenoid:options", new HashMap<String, Object>() {{
             /* How to add test badge */
             put("name", "Test badge...");
@@ -56,17 +55,18 @@ public class LabirintTest {
 
             /* How to add "trash" button */
             put("labels", new HashMap<String, Object>() {{
-                put("auto", "true");
+                put("AUTO", "true");
             }});
 
             /* How to enable video recording */
-            put("enableVideo", true);
+            //put("enableVideo", false);
+            put("enableVNC", true);
         }});
 
-        String hubURL = System.getProperty("hub_name", "http://localhost:4444");
+        String hubURL = System.getProperty("hub", "http://selenoid:4444");
+        System.out.println(hubURL);
 
         driver = new RemoteWebDriver(new URL(hubURL + "/wd/hub"), options);
-
         //driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
         //driver = new RemoteWebDriver(new URL("http://localhost:4444"), new ChromeOptions());
         //driver = new ChromeDriver();
