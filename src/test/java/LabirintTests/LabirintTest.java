@@ -61,7 +61,7 @@ public class LabirintTest {
             /* How to enable video recording */
             put("enableVideo", true);
         }});
-        driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
+        driver = new RemoteWebDriver(new URL("http://selenoid:4444/wd/hub"), options);
 
         //driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
         //driver = new RemoteWebDriver(new URL("http://localhost:4444"), new ChromeOptions());
